@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Angka</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Tebak Angka</h1>
+        <p>Masukkan angka antara 1 dan 100:</p>
+        <input type="number" id="guessInput">
+        <button onclick="checkGuess()">Tebak!</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        // Generate random number between 1 and 100
+        const correctNumber = Math.floor(Math.random() * 100) + 1;
+
+        function checkGuess() {
+            // Get user's guess
+            const userGuess = parseInt(document.getElementById("guessInput").value);
+
+            // Get message element
+            const message = document.getElementById("message");
+
+            // Check if guess is correct
+            if (userGuess === correctNumber) {
+                message.textContent = `Selamat! Angka yang benar adalah ${correctNumber}. Anda berhasil menebak!`;
+                message.style.color = "green";
+                disableInput();
+            } else if (userGuess < correctNumber) {
+                message.textContent = "Tebakan Anda terlalu rendah. Coba lagi!";
+                message.style.color = "red";
+            } else {
+                message.textContent = "Tebakan Anda terlalu tinggi. Coba lagi!";
+                message.style.color = "red";
+            }
+        }
+
+        function disableInput() {
+            document.getElementById("guessInput").disabled = true;
+        }
+    </script>
+</body>
+</html>

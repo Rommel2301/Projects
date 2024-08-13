@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartu Memori</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .card img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container"></div>
+
+    <script>
+        const cards = [
+            { id: 1, img: 'angka1.png' },
+            { id: 2, img: 'angka2.png' },
+            { id: 3, img: 'angka3.jpeg' },
+            { id: 4, img: 'angka4.jpeg' },
+            { id: 5, img: 'angka5.png' },
+            { id: 6, img: 'angka6.jpeg' },
+            { id: 7, img: 'angka7.jpeg' },
+            { id: 8, img: 'angka8.png' },
+        ];
+
+        let firstCard = null;
+        let secondCard = null;
+
+        function createCard(card) {
+            const div = document.createElement('div');
+            div.classList.add('card');
+            const img = document.createElement('img');
+            img.src = card.img;
+            div.appendChild(img);
+            div.addEventListener('click', () => flipCard(div, card));
+            return div;
+        }
+
+        function flipCard(cardElement, card) {
+            if (cardElement.classList.contains('flipped')) {
+                return;
+            }
+
+            cardElement.classList.add('flipped');
+            cardElement.querySelector('img').style.display = 'block';
+
+            if (!firstCard) {
+                firstCard = { element: cardElement, card };
+            } else {
+                secondCard = { element: cardElement, card };
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            if (firstCard.card.id === secondCard.card.id) {
+                setTimeout(() => {
+                    firstCard.element.classList.remove('flipped');
+                    secondCard.element.classList.remove('flipped');
+                    firstCard = null;
+                    secondCard = null;
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    firstCard.element.classList.remove('flipped');
+                    secondCard.element.classList.remove('flipped');
+                    firstCard.element.querySelector('img').style.display = 'none';
+                    secondCard.element.querySelector('img').style.display = 'none';
+                    firstCard = null;
+                    secondCard = null;
+                }, 1000);
+            }
+        }
+
+        function shuffleCards() {
+            const shuffledCards = [...cards, ...cards].sort(() => Math.random() - 0.5);
+            shuffledCards.forEach(card => {
+                const cardElement = createCard(card);
+                document.querySelector('.game-container').appendChild(cardElement);
+            });
+        }
+
+        shuffleCards();
+    </script>
+</body>
+</html>

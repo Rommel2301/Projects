@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 30px); /* Ubah 10 menjadi ukuran yang diinginkan */
+            gap: 1px;
+            background-color: #999;
+            border: 1px solid #333;
+        }
+
+        .cell {
+            background-color: #ccc;
+            border: 1px solid #666;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .cell.clicked {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board"></div>
+
+    <script>
+        const board = document.getElementById('board');
+        const size = 10; // Ukuran papan Minesweeper
+
+        // Membuat papan Minesweeper
+        for (let i = 0; i < size * size; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.setAttribute('data-index', i);
+            cell.addEventListener('click', handleClick);
+            board.appendChild(cell);
+        }
+
+        // Menangani klik pada sel
+        function handleClick(event) {
+            const cell = event.target;
+            const index = parseInt(cell.getAttribute('data-index'));
+            const isMine = Math.random() < 0.2; // Menetapkan 20% kemungkinan ada ranjau
+
+            if (isMine) {
+                cell.textContent = 'X';
+                cell.classList.add('clicked');
+                revealAll();
+                alert('Game Over! You clicked on a mine.');
+            } else {
+                cell.classList.add('clicked');
+                const count = countAdjacentMines(index);
+                if (count > 0) {
+                    cell.textContent = count;
+                }
+            }
+        }
+
+        // Menghitung jumlah ranjau di sekitar sel tertentu
+        function countAdjacentMines(index) {
+            let count = 0;
+            const adjacentIndices = getAdjacentIndices(index);
+            for (const idx of adjacentIndices) {
+                const cell = document.querySelector(`.cell[data-index="${idx}"]`);
+                if (cell && cell.textContent === 'X') {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        // Mendapatkan indeks sel-sel tetangga
+        function getAdjacentIndices(index) {
+            const row = Math.floor(index / size);
+            const col = index % size;
+            const indices = [];
+            for (let i = Math.max(0, row - 1); i <= Math.min(size - 1, row + 1); i++) {
+                for (let j = Math.max(0, col - 1); j <= Math.min(size - 1, col + 1); j++) {
+                    indices.push(i * size + j);
+                }
+            }
+            return indices.filter(idx => idx !== index); // Hilangkan indeks sel itu sendiri
+        }
+
+        // Mengungkap semua sel jika ada ranjau
+        function revealAll() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                if (cell.textContent === 'X') {
+                    cell.classList.add('clicked');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
